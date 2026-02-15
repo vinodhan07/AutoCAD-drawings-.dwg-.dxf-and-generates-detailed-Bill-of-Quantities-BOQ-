@@ -3,28 +3,37 @@
 This guide explains how to deploy the **CAD to BOQ Engine** to the cloud.
 
 ## 🏗️ Architecture
-- **Backend**: Python FastAPI (Deploys to **Render** or **Heroku**)
+- **Backend**: Python FastAPI (Deploys to **Render** via Docker)
 - **Frontend**: React + Vite (Deploys to **Vercel** or **Netlify**)
 
 ---
 
 ## 1. 🐍 Backend Deployment (Render)
 
-We will deploy the FastAPI backend to [Render.com](https://render.com) (Free Tier available).
+Because **ODA File Converter** (required for `.dwg` support) is not standard on Linux servers, we must use **Docker**.
 
-### Steps:
-1.  **Push your code to GitHub**.
+### Prerequisites
+1.  **Download ODA File Converter for Linux**:
+    - Go to [Open Design Alliance Download Page](https://www.opendesign.com/guestfiles/oda_file_converter) (Login may be required, or use guest link if available).
+    - Download the **Linux DEB** version (e.g., `ODAFileConverter_25.2.0.0_Linux_3.10_11.deb`).
+    - **Place this `.deb` file inside the `backend/` folder** of your project.
+
+### Deployment Steps:
+1.  **Commit & Push**: Ensure the `backend/Dockerfile` and your `.deb` file are committed to GitHub.
+    *(Note: If the `.deb` file is large >100MB, you might need Git LFS, or just use the Dockerfile without it and accept that DWG upload will fail until you figure out a way to mount/install it. **Recommendation**: For free tier, just commit it if <100MB or use a direct download link in Dockerfile if you find one.)*
+    
+    *Alternative:* If you cannot commit the `.deb` file, you can edit the Dockerfile to use `wget` with a public link if you can find one.
+
 2.  Go to **Render Dashboard** → **New +** → **Web Service**.
 3.  Connect your GitHub repository.
-4.  **Root Directory**: `backend`
-5.  **Runtime**: `Python 3`
-6.  **Build Command**: `pip install -r requirements.txt`
-7.  **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-8.  **Environment Variables**:
+4.  **Runtime**: Select **Docker** (NOT Python 3).
+5.  **Root Directory**: `backend`
+6.  **Environment Variables**:
     *   `GOOGLE_CLIENT_ID`: (Your Google Client ID)
-    *   `PYTHON_VERSION`: `3.10.0`
-9.  Click **Create Web Service**.
-10. Once deployed, copy your backend URL (e.g., `https://cad-to-boq.onrender.com`).
+    *   `PORT`: `8000`
+7.  Click **Create Web Service**.
+
+**Note**: If you skip the ODA installation, the app will still run, but uploading `.dwg` files will return an error nicely asking for `.dxf`.
 
 ---
 
@@ -54,16 +63,6 @@ We will deploy the React frontend to [Vercel](https://vercel.com).
     *   **Authorized Javascript Origins**
     *   **Authorized Redirect URIs**
 5.  Save changes.
-
-### CORS Update (Optional)
-If you encounter CORS issues, you may need to update `backend/main.py` restrict allowed origins to your specific Vercel domain instead of `["*"]`.
-
-```python
-origins = [
-    "http://localhost:5173",
-    "https://your-app.vercel.app"
-]
-```
 
 ---
 
