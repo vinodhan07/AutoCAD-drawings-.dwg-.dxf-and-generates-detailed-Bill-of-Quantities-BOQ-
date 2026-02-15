@@ -35,6 +35,14 @@ Because **ODA File Converter** (required for `.dwg` support) is not standard on 
 
 **Note**: If you skip the ODA installation, the app will still run, but uploading `.dwg` files will return an error nicely asking for `.dxf`.
 
+### ❓ Troubleshooting Start Command
+If Render asks for a **Start Command** (e.g., `gunicorn your_application.wsgi`), it means you selected **"Python 3"** as the Environment instead of **"Docker"**.
+
+- **Recommended**: Go back and select **Docker** Runtime (this installs ODA automatically).
+- **If you must use Python 3**:
+    - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+    - **⚠️ Warning**: DWG conversion will NOT work because ODA cannot be installed easily in this mode. You will only be able to upload `.dxf` files.
+
 ---
 
 ## 2. ⚛️ Frontend Deployment (Vercel)
