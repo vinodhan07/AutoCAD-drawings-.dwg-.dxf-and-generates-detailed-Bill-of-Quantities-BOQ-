@@ -168,12 +168,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 5. Open a Pull Request
 
 ---
-
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-<div align="center">
-  <sub>Built with ❤️ by the CAD to BOQ Team</sub>
-</div>
